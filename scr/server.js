@@ -1,0 +1,45 @@
+import express from "express";
+
+//* import database connection
+import { connectDB } from "./config/db.config.js";
+
+
+// app instance
+const app = express();
+
+// port number
+const PORT = 8000;
+
+// ** connect to database
+connectDB();
+
+app.get("/", (req, res) => {
+  res.status(200).json({ 
+    message: "Server is running successfully"
+ });
+});
+
+// using json middleware
+app.use(express.json({limit: '10mb'}));
+
+
+// ! using routes middleware
+app.use("/api/auth", authRoutes);
+
+
+
+// error handling middleware
+app.use((error, req, res, next) => {
+  const message = error?.message || "Something went wrong";
+
+  res.status(500).json({
+    message: message,
+    status: "error",
+    success: false,
+    data: null,
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
