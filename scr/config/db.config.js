@@ -4,7 +4,7 @@ import { MONGO_CONFIG } from '../constants/db.constant.js';
 
 // ! mongo db connection function
 
-const connectDB =  () => {
+export const connectDB =  () => {
     mongoose
     .connect(MONGO_CONFIG.uri, {
         dbName: MONGO_CONFIG.dbName,

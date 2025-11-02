@@ -1,4 +1,4 @@
-import {USER_ROLES} from '../constants/user.constant.js';
+import {USER_ROLES} from '../constants/enums.constant.js';
 import User from '../models/user.model.js';
 
 
