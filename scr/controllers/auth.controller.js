@@ -2,9 +2,13 @@ import { USER_ROLES } from "../constants/enums.constant.js";
 import User from "../models/user.model.js";
 import { hashPassword } from "../utils/bcrypt.utils.js";
 
+// import custom error class
+import CustomError from "../middlewares/error_handler.middleware.js";
+import { asyncHandler } from "../utils/asyncHandler.utils.js";
+
 //! resister user
 
-export const register = async (req, res, next) => {
+export const register = asyncHandler (req, res, next) => {
   try {
     console.log(req.body);
 
@@ -12,7 +16,7 @@ export const register = async (req, res, next) => {
     const { firstName, lastName, email, password, phone, gender } = req.body;
 
     if (!password) {
-      throw new Error("Password is required");
+      throw new CustomError("Password is required" , 400);
     }
 
     const user = await User.create({
@@ -44,12 +48,16 @@ export const login = async (req, res, next) => {
 
     //! check if user exists
     if (!email) {
-      const error = new Error("Email is required");
-      next(error);
+      // const error = new Error("Email is required");
+      // next(error);
+
+      throw new CustomError("Email is required", 400);
     }
     if (!password) {
-      const error = new Error("Password is required");
-      next(error);
+      // const error = new Error("Password is required");
+      // next(error);
+
+      throw new CustomError("Password is required", 400);
     }
 
     //! get user by email
@@ -57,9 +65,11 @@ export const login = async (req, res, next) => {
 
     //! throw error if user does not exist
     if (!user) {
-      const error = new Error("User does not exist");
-      error.status = 404;
-      next(error);
+      // const error = new Error("User does not exist");
+      // error.status = 404;
+      // next(error);
+
+      throw new CustomError("User does not exist", 404);
     }
 
     //! compare password
@@ -67,9 +77,11 @@ export const login = async (req, res, next) => {
 
     //! throw error if password does not match
     if (!isMatch) {
-      const error = new Error("Invalid credentials");
-      error.status = 401;
-      next(error);
+      // const error = new Error("Invalid credentials");
+      // error.status = 401;
+      // next(error);
+
+      throw new CustomError("Invalid credentials", 401);
     }
 
     //! login successful
@@ -95,9 +107,11 @@ export const changePassword = async (req, res, next) => {
 
     //! throw error if user does not exist
     if (!user) {
-      const error = new Error("User does not exist");
-      error.status = 404;
-      next(error);
+      // const error = new Error("User does not exist");
+      // error.status = 404;
+      // next(error);
+
+      throw new CustomError("User does not exist", 404);
     }
 
     //! compare old password
@@ -105,9 +119,11 @@ export const changePassword = async (req, res, next) => {
 
     //! throw error if old password does not match
     if (!isMatch) {
-      const error = new Error("Old password is incorrect");
-      error.status = 401;
-      next(error);
+      // const error = new Error("Old password is incorrect");
+      // error.status = 401;
+      // next(error);
+
+      throw new CustomError("Old password is incorrect", 401);
     }
 
     //! update password
@@ -134,9 +150,11 @@ export const forgotPassword = async (req, res, next) => {
 
     //! throw error if user does not exist
     if (!user) {
-      const error = new Error("User does not exist");
-      error.status = 404;
-      next(error);
+      // const error = new Error("User does not exist");
+      // error.status = 404;
+      // next(error);
+
+      throw new CustomError("User does not exist", 404);
     }
 
     //! update password
