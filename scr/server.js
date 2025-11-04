@@ -6,31 +6,26 @@ import { connectDB } from "./config/db.config.js";
 // * importing auth routes
 import authRoutes from "./routes/auth.route.js";
 
-
 // app instance
 const app = express();
 
 // port number
-const PORT = 8000;
+const PORT = 8080;
 
 // ** connect to database
 connectDB();
 
-
 // using json middleware
-app.use(express.json({limit: '10mb'}));
+app.use(express.json({ limit: "10mb" }));
 
 app.get("/", (req, res) => {
-  res.status(200).json({ 
-    message: "Server is running successfully"
- });
+  res.status(200).json({
+    message: "Server is running successfully",
+  });
 });
-
 
 // ! using routes middleware
 app.use("/api/auth", authRoutes);
-
-
 
 // error handling middleware
 app.use((error, req, res, next) => {
