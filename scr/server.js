@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+
+
 import express from "express";
 
 //* import database connection
@@ -10,7 +13,8 @@ import authRoutes from "./routes/auth.route.js";
 const app = express();
 
 // port number
-const PORT = 8080;
+const PORT = process.env.PORT 
+;
 
 // ** connect to database
 connectDB();
@@ -31,11 +35,17 @@ app.use("/api/auth", authRoutes);
 app.use((error, req, res, next) => {
   const message = error?.message || "Something went wrong";
 
-  res.status(500).json({
+
+  // give proper status code
+  const statusCode = error?.status || 500;
+
+
+  res.status(statusCode).json({
     message: message,
     status: "error",
     success: false,
     data: null,
+    original
   });
 });
 

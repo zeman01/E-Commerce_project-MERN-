@@ -31,3 +31,28 @@ export const getItemsByCategory = async (req, res, next) => {
         next(error);
     }
 };
+
+// get item by ID
+export const getItemById = async (req, res, next) => {
+    try {
+        const { itemId } = req.params;
+        const item = await Item.findById(itemId);
+
+        if (!item) {
+            const error = new Error("Item not found");
+            error.status = 404;
+            return next(error);
+        }
+
+        res.status(200).json({
+            message: "Item fetched successfully",
+            status: 'success',
+            data: item
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+        
