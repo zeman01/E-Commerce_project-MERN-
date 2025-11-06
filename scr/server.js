@@ -1,4 +1,8 @@
+// importing dotenv
 import dotenv from "dotenv";
+dotenv.config();
+
+// importing express  
 
 
 import express from "express";
@@ -13,8 +17,9 @@ import authRoutes from "./routes/auth.route.js";
 const app = express();
 
 // port number
-const PORT = process.env.PORT 
+const PORT = process.env.PORT || 5000
 ;
+console.log('Current working directory:', process.cwd());
 
 // ** connect to database
 connectDB();
@@ -31,24 +36,14 @@ app.get("/", (req, res) => {
 // ! using routes middleware
 app.use("/api/auth", authRoutes);
 
-// error handling middleware
-app.use((error, req, res, next) => {
-  const message = error?.message || "Something went wrong";
+// ! error handling middleware
+// * import error handler middleware
+import { errorHandler } from "./middlewares/error_handler.middleware.js";
 
-
-  // give proper status code
-  const statusCode = error?.status || 500;
-
-
-  res.status(statusCode).json({
-    message: message,
-    status: "error",
-    success: false,
-    data: null,
-    original
-  });
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+
