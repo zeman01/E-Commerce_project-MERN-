@@ -3,16 +3,14 @@ import User from "../models/user.model.js";
 import { hashPassword } from "../utils/bcrypt.utils.js";
 
 // import custom error class
-import CustomError from "../middlewares/error_handler.middleware.js";
+import CustomError  from "../middlewares/error_handler.middleware.js";
 import { asyncHandler } from "../utils/asyncHandler.utils.js";
 
 //! resister user
 
-export const register = asyncHandler (req, res, next) => {
-  try {
-    console.log(req.body);
+export const register = asyncHandler (async (req, res, next) => {
 
-    const hashedPassword = await hashPassword(password); // await hashPassword(password);
+    const hashedPassword = await hashPassword(password);
     const { firstName, lastName, email, password, phone, gender } = req.body;
 
     if (!password) {
@@ -34,15 +32,12 @@ export const register = asyncHandler (req, res, next) => {
       status: "success",
       data: user,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+}) ;
 
 // !login user
 
-export const login = async (req, res, next) => {
-  try {
+export const login = asyncHandler ( async(req, res, next) => {
+
     //! email and password from request body
     const { email, password } = req.body;
 
@@ -90,15 +85,12 @@ export const login = async (req, res, next) => {
       status: "success",
       data: user,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
 // !change password
 
-export const changePassword = async (req, res, next) => {
-  try {
+export const changePassword = asyncHandler ( async (req, res, next) => {
+
     const { userId } = req.params;
     const { oldPassword, newPassword } = req.body;
 
@@ -134,15 +126,13 @@ export const changePassword = async (req, res, next) => {
       message: "Password changed successfully",
       status: "success",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+
+});
 
 // !forgot password
 
-export const forgotPassword = async (req, res, next) => {
-  try {
+export const forgotPassword = asyncHandler ( async (req, res, next) => {
+
     const { email, newPassword } = req.body;
 
     //! get user by email
@@ -165,7 +155,5 @@ export const forgotPassword = async (req, res, next) => {
       message: "Password reset successfully",
       status: "success",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+
+});
