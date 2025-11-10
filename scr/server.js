@@ -13,13 +13,22 @@ import { connectDB } from "./config/db.config.js";
 // * importing auth routes
 import authRoutes from "./routes/auth.route.js";
 
+// * importing user routes
+import userRoutes from "./routes/user.route.js";
+
+// * importing category routes
+import categoryRoutes from "./routes/category.route.js";
+
+// * importing brand routes
+import brandRoutes from "./routes/brand.route.js";
+
+
 // app instance
 const app = express();
 
 // port number
 const PORT = process.env.PORT || 5000
 ;
-console.log('Current working directory:', process.cwd());
 
 // ** connect to database
 connectDB();
@@ -35,6 +44,8 @@ app.get("/", (req, res) => {
 
 // ! using routes middleware
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/categories", categoryRoutes);
 
 // ! error handling middleware
 // * import error handler middleware

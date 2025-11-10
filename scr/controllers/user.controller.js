@@ -1,4 +1,6 @@
 import User from '../models/user.model.js';
+// import  CustomError  from "../middlewares/error_handler.middleware.js";
+
 
 
 // get all users

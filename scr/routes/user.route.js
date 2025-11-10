@@ -7,18 +7,18 @@ import {
     getById,
     updateUser,
     deleteUser
-} from "../controllers/user.controller";
+} from "../controllers/user.controller.js";
 
 
 // using routes
 
-router.get("/api", getAll)
+router.get("/", getAll)
 
-router.get("/api/:id", getById)
+router.get("/:id", getById)
 
-router.put("/api/:id",updateUser)
+router.put("/:id",updateUser)
 
-router.delete("/api/:id", deleteUser)
+router.delete("/:id", deleteUser)
 
 
 

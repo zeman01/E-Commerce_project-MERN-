@@ -11,12 +11,12 @@ export const GENDER = {
 }
 
 
-export const CATEGORY = {
-    ELECTRONICS : "Electronics",
-    FASHION : "Fashion",
-    GROCERY : "Grocery",
-    HOME_APPLIANCES : "Home Appliances",
-    BOOKS : "Books",
-    TOYS : "Toys",
-    MISCELLANEOUS : "Miscellaneous"
-}
+// export const CATEGORY = {
+//     ELECTRONICS : "Electronics",
+//     FASHION : "Fashion",
+//     GROCERY : "Grocery",
+//     HOME_APPLIANCES : "Home Appliances",
+//     BOOKS : "Books",
+//     TOYS : "Toys",
+//     MISCELLANEOUS : "Miscellaneous"
+// }
