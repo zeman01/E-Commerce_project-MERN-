@@ -3,13 +3,19 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // importing express  
-
-
 import express from "express";
 
 //* import database connection
 import { connectDB } from "./config/db.config.js";
 
+// importing cookie parser
+import cookieParser from "cookie-parser";
+
+// * import error handler middleware
+import { errorHandler } from "./middlewares/error_handler.middleware.js";
+
+
+// ! importing routes
 // * importing auth routes
 import authRoutes from "./routes/auth.route.js";
 
@@ -21,6 +27,9 @@ import categoryRoutes from "./routes/category.route.js";
 
 // * importing brand routes
 import brandRoutes from "./routes/brand.route.js";
+
+// * importing product routes
+import productRoutes from "./routes/product.route.js";
 
 
 // app instance
@@ -46,10 +55,10 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/brands", brandRoutes);
 
 // ! error handling middleware
-// * import error handler middleware
-import { errorHandler } from "./middlewares/error_handler.middleware.js";
 
 app.use(errorHandler);
 

@@ -1,26 +1,25 @@
 import Brand from "../models/brand.model.js";
 import { asyncHandler } from "../utils/asyncHandler.utils.js";
 import { uploadToCloudinary } from "../utils/cloudinary.utils.js";
-import  CustomError  from "../middlewares/error_handler.middleware.js";
+import CustomError from "../middlewares/error_handler.middleware.js";
 
+// ! CRUD Operations
 // create brand
-export const createBrand = asyncHandler(async (req, res, next) => {
+export const createBrand = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
   const file = req.file;
 
+  // create brand instance
   const brand = new Brand({ name, description });
 
   //   image upload
   if (file) {
-    const { path, public_id } = await uploadToCloudinary(
-      file.path,
-      "/brands"
-    );
+    const { path, public_id } = await uploadToCloudinary(file.path, "/brands");
     brand.image = {
       path,
       public_id,
     };
-  }
+  } else throw new CustomError("Brand image is required", 400);
 
   //   save brand
   await brand.save();
@@ -33,7 +32,7 @@ export const createBrand = asyncHandler(async (req, res, next) => {
 });
 
 // get all
-export const getAll = asyncHandler(async (req, res, next) => {
+export const getAll = asyncHandler(async (req, res) => {
   const brands = await Brand.find({});
 
   if (!brands) {
@@ -80,10 +79,14 @@ export const updateBrand = asyncHandler(async (req, res, next) => {
 
   //   image upload
   if (file) {
-    const { path, public_id } = await uploadToCloudinary(
-      file.path,
-      "/brands"
-    );
+    const { path, public_id } = await uploadToCloudinary(file.path, "/brands");
+
+    if (brand.image) {
+      // delete the previous image from cloudinary
+      await deleteFromCloudinary(brand.image.public_id);
+
+    }
+
     brand.image = {
       path,
       public_id,
