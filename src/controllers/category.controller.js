@@ -1,7 +1,7 @@
 import Category from "../models/category.model.js";
 import { asyncHandler } from "../utils/asyncHandler.utils.js";
 import { uploadToCloudinary } from "../utils/cloudinary.utils.js";
-import  CustomError  from "../middlewares/error_handler.middleware.js";
+import CustomError from "../middlewares/error_handler.middleware.js";
 
 // create category
 export const createCategory = asyncHandler(async (req, res, next) => {
@@ -34,11 +34,8 @@ export const createCategory = asyncHandler(async (req, res, next) => {
 
 // get all categories
 export const getAllCategories = asyncHandler(async (req, res, next) => {
+  console.log("test");
   const categories = await Category.find({});
-
-  if (!categories) {
-    throw new CustomError("No categories found", 404);
-  }
 
   res.status(200).json({
     message: "Categories fetched successfully",

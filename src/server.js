@@ -16,20 +16,12 @@ import { errorHandler } from "./middlewares/error_handler.middleware.js";
 
 
 // ! importing routes
-// * importing auth routes
 import authRoutes from "./routes/auth.route.js";
-
-// * importing user routes
 import userRoutes from "./routes/user.route.js";
-
-// * importing category routes
 import categoryRoutes from "./routes/category.route.js";
-
-// * importing brand routes
 import brandRoutes from "./routes/brand.route.js";
-
-// * importing product routes
 import productRoutes from "./routes/product.route.js";
+// import wishlistRoutes from "./routes/wishlist.route.js";
 
 
 // app instance
@@ -51,12 +43,13 @@ app.get("/", (req, res) => {
   });
 });
 
-// ! using routes middleware
+// ! using routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/brands", brandRoutes);
+// app.use("/api/wishlist",wishlistRoutes)
 
 // ! error handling middleware
 

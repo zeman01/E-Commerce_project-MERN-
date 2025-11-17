@@ -38,6 +38,16 @@ export const userAuthenticate = (roles) => {
         throw new CustomError("Unauthorized, Access Denied", 401);
       }
 
+
+      // used for authorized user to access their info in req object
+      req.User ={
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      }
+
       next();
     } catch (error) {}
   };

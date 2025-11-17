@@ -1,12 +1,12 @@
 
 
 import jwt from 'jsonwebtoken'
-import { jwt_config } from '../config/config.js'
+import { JWT_CONFIG } from '../config/config.js'
 
 
 export const generateJWTToken = (payload) => {
-    return jwt.sign(payload, jwt_config.secret, {
-        expiresIn:jwt_config.expires_in
+    return jwt.sign(payload, JWT_CONFIG.secret, {
+        expiresIn:JWT_CONFIG.expires_in
     })
 }
 

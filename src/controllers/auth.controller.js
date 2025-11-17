@@ -5,6 +5,8 @@ import { hashPassword, comparePassword } from "../utils/bcrypt.utils.js";
 // import custom error class
 import CustomError from "../middlewares/error_handler.middleware.js";
 import { asyncHandler } from "../utils/asyncHandler.utils.js";
+import { sendEmail } from "../utils/nodemailer.utils.js";
+
 
 //! register user
 export const register = asyncHandler(async (req, res, next) => {
@@ -73,6 +75,8 @@ export const login = asyncHandler(async (req, res, next) => {
     throw new CustomError("Credentials does not match", 400);
   }
 
+
+  await sendEmail()
   //* token
   const token = generateToken({
     id: user._id,

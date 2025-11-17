@@ -1,8 +1,5 @@
 import express from "express";
 
-// router instance
-const router = express.Router();
-
 import {
   createCategory,
   getAllCategories,
@@ -15,6 +12,9 @@ import { uploadFile } from "../middlewares/multer.middleware.js";
 
 // use file upload middleware
 const uploader = uploadFile();
+
+// router instance
+const router = express.Router();
 
 // create category route
 router.post("/", uploader.single("image"), createCategory);

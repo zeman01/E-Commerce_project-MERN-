@@ -1,25 +1,22 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "A e-com backend project",
   "main": "server.js",
-  "type": "module",
   "scripts": {
-    "start": "node --watch ./scr/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeman01/E-Commerce_project-MERN-.git"
+  },
+  "author": "Jaman Shrestha",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zeman01/E-Commerce_project-MERN-/issues"
+  },
+  "homepage": "https://github.com/zeman01/E-Commerce_project-MERN-#readme",
   "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "cloudinary": "^2.8.0",
-    "cookie-parser": "^1.4.7",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.2",
-    "mongosh": "^2.5.9",
-    "multer": "^2.0.2"
+    "bcrypt": "^6.0.0"
   }
 }
