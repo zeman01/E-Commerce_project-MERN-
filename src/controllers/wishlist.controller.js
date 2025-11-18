@@ -81,3 +81,32 @@ export const toggleWishlist = asyncHandler(async (req, res) => {
     data: wishlist,
   });
 });
+
+
+// getAll wishlists
+export const getAll = asyncHandler(async (req, res) => {
+
+  const user = req.User._id
+  const wishlists = await Wishlist.find(user).populate("User").populate("Products");
+
+  res.status(200).json({
+    message: "All wishlists fetched",
+    status: "success",
+    data: lists,
+  });
+});
+
+// clear wishlist
+export const clear = asyncHandler(async (req, res) => {
+ const user = req.User._id;
+ const deleted = await Wishlist.deleteMany({user});
+
+ if(!deleted){
+    throw new CustomError("Error clearing list",404);
+ }
+  res.status(200).json({  
+    message: "Wishlist cleared",
+    status: "success",
+    data: null
+  });
+});

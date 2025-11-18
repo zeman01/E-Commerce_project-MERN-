@@ -16,9 +16,10 @@ router.post(
   create
 );
 // Get wishlist
-router.get("/wishlist", authenticate, getWishlist);
+router.get("/", authenticate([USER_ROLES.USER]), getAll);
 
-// // Remove from wishlist
-router.delete("/wishlist/:productId", authenticate, removeFromWishlist);
+// clear wishlist
+router.delete("/wishlist", authenticate([USER_ROLES.USER]), clear);
+
 
 export default router;

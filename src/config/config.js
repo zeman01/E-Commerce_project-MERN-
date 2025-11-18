@@ -1,4 +1,5 @@
-
+import dotenv from "dotenv";
+dotenv.config();
 
 export const MONGO_CONFIG = {
     uri: process.env.MONGODB_URI,
@@ -18,6 +19,11 @@ export const JWT_CONFIG = {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d'
 }
 
-// export const NODEMAILER_CONFIG ={
+export const NODEMAILER_CONFIG ={
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+    service: process.env.SMTP_SERVICE
 
-// }
+}

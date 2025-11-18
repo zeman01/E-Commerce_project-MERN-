@@ -46,7 +46,7 @@ export const uploadFile = (dir = "/") => {
             ","
           )} formats allowed`,
           400
-        ), false
+        )
       );
     }
   };

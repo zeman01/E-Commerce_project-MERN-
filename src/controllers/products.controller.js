@@ -13,6 +13,7 @@ const dir = "/products";
 
 //* get all
 export const getAll = asyncHandler(async (req, res) => {
+  console.log(req);
   const products = await Product.find({})
     .populate("Category")
     .populate("Brand");
