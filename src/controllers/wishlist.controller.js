@@ -64,10 +64,10 @@ export const toggleWishlist = asyncHandler(async (req, res) => {
     wishlist = await Wishlist.create({ user, products: product._id });
   } else {
     // update wishlist
-    const index = wishlist.products.indexOf(product._id);
-    if (index > -1) {
+    const productIndex = wishlist.products.indexOf(product._id);
+    if (productIndex > -1) {
       // product exists in wishlist, remove it
-      wishlist.products.splice(index, 1);
+      wishlist.products.splice(productIndex, 1);
     } else {
       // product not in wishlist, add it
       wishlist.products.push(product._id);

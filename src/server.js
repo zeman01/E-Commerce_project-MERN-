@@ -1,4 +1,8 @@
 import express from "express";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import { connectDB } from "./config/db.config.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -34,7 +38,6 @@ app.get("/", (req, res) => {
   });
 });
 
-console.log("Loaded ENV:", process.env.MONGODB_URI, process.env.DB_NAME);
 
 // ! using routes
 app.use("/api/auth", authRoutes);

@@ -34,8 +34,24 @@ export const createCategory = asyncHandler(async (req, res, next) => {
 
 // get all categories
 export const getAllCategories = asyncHandler(async (req, res, next) => {
-  console.log("test");
-  const categories = await Category.find({});
+  // req query filters
+  // add pagination
+  const filter = {};
+  const { query, page, limit } = req.query;
+  const currentPage = parseInt(page) || 1;
+  const itemsPerPage = parseInt(limit) || 10;
+  const skip = (currentPage - 1) * itemsPerPage;
+
+  // for search with page
+  if (query) {
+    filter.$or = [
+      { name: { $regex: query, $options: "i" } },
+      { description: { $regex: query, $options: "i" } },
+    ];
+  }
+
+  const categories = await Category.find(filter).limit(itemsPerPage).skip(skip)
+    .sort;
 
   res.status(200).json({
     message: "Categories fetched successfully",

@@ -6,10 +6,11 @@ import { hashPassword, comparePassword } from "../utils/bcrypt.utils.js";
 import CustomError from "../middlewares/error_handler.middleware.js";
 import { asyncHandler } from "../utils/asyncHandler.utils.js";
 import { sendEmail } from "../utils/nodemailer.utils.js";
-
+import { uploadToCloudinary } from "../utils/cloudinary.utils.js";
+import { generateJWTToken } from "../utils/jwt.utils.js";
 
 //! register user
-export const register = asyncHandler(async (req, res, next) => {
+export const register = asyncHandler(async (req, res) => {
   const { first_name, last_name, email, password, phone, gender } = req.body;
   const image = req.file;
   console.log(image);
@@ -30,7 +31,7 @@ export const register = asyncHandler(async (req, res, next) => {
   });
 
   if (image) {
-    const { path, public_id } = await uploadToCloud(
+    const { path, public_id } = await uploadToCloudinary(
       image.path,
       "/profile_images"
     );
@@ -50,7 +51,7 @@ export const register = asyncHandler(async (req, res, next) => {
 });
 
 //! login
-export const login = asyncHandler(async (req, res, next) => {
+export const login = asyncHandler(async (req, res) => {
   //* email pass
   console.log(req.body);
   const { email, password } = req.body;
@@ -75,10 +76,9 @@ export const login = asyncHandler(async (req, res, next) => {
     throw new CustomError("Credentials does not match", 400);
   }
 
-
-  await sendEmail()
+  await sendEmail();
   //* token
-  const token = generateToken({
+  const token = generateJWTToken({
     id: user._id,
     email: user.email,
     first_name: user.first_name,
