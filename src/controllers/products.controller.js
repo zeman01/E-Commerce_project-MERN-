@@ -1,5 +1,3 @@
-
-
 import Product from "../models/product.model.js";
 import Category from "../models/category.model.js";
 import Brand from "../models/brand.model.js";
@@ -7,16 +5,74 @@ import { asyncHandler } from "../utils/asyncHandler.utils.js";
 import { uploadToCloudinary } from "../utils/cloudinary.utils.js";
 import CustomError from "../middlewares/error_handler.middleware.js";
 
-
-
 const dir = "/products";
 
 //* get all
 export const getAll = asyncHandler(async (req, res) => {
-  console.log(req);
+  // req query filters
+  // add pagination
+  const filter = {};
+  const { query, page, limit, category, price_min, price_max } = req.query;
+  const currentPage = parseInt(page) || 1;
+  const itemsPerPage = parseInt(limit) || 10;
+  const skip = (currentPage - 1) * itemsPerPage;
+
+  // for search with page
+  if (query) {
+    filter.$or = [
+      { name: { $regex: query, $options: "i" } },
+      { description: { $regex: query, $options: "i" } },
+    ];
+  }
+  // filter with category
+  if (category) {
+    filter.category = category;
+  }
+  // filter with brand
+  if (brand) {
+    filter.brand = brand;
+  }
+  // filter with price range
+  if (price_min || price_max) {
+    filter.price = {};
+
+    if (price_max && price_min) {
+      filter.price.$and = [
+        {
+          price: {
+            $gte: price_min,
+          },
+          price: {
+            $lte: price_max,
+          },
+        },
+      ];
+    }
+
+    if (price_min) {
+      filter.price.$gte = parseFloat(price_min);
+    }
+    if (price_max) {
+      filter.price.$lte = parseFloat(price_max);
+    }
+  }
+
   const products = await Product.find({})
     .populate("Category")
-    .populate("Brand");
+    .populate("Brand")
+    .sort({ createdAt: -1 });
+
+
+    const totalCount = await Product.countDocuments(filter);
+
+    const totalPages = Math.ceil(totalCount / itemsPerPage);
+
+    const pagination = getPaginationData(
+      currentPage,
+      itemsPerPage,
+      totalCount,
+      totalPages
+    );
 
   res.status(200).json({
     message: "Products fetched",
@@ -153,7 +209,7 @@ export const update = asyncHandler(async (req, res) => {
 
     if (!product_brand) {
       throw new CustomError("Brand not found", 400);
-    } 
+    }
     product.brand = product_brand._id;
   }
 
@@ -162,7 +218,7 @@ export const update = asyncHandler(async (req, res) => {
 
     if (!product_category) {
       throw new CustomError("Category not found", 400);
-    } 
+    }
     product.category = product_category._id;
   }
 
@@ -194,30 +250,26 @@ export const update = asyncHandler(async (req, res) => {
   });
 });
 
-
-
-
 // delete product
 export const remove = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const product = await Product.findOne({_id: id });
+  const product = await Product.findOne({ _id: id });
 
   if (!product) {
     throw new CustomError("Product not found", 404);
   }
 
-//delete cover image and images from cloudinary 
+  //delete cover image and images from cloudinary
 
-await deleteFile(product.cover_image.public_id);
-// delete images from cloudinary
+  await deleteFile(product.cover_image.public_id);
+  // delete images from cloudinary
   if (product.images && product.images.length > 0) {
     const deletePromises = product.images.map(
       async (image) => await deleteFile(image.public_id)
     );
     await Promise.all(deletePromises);
   }
-
 
   await product.deleteOne();
 
@@ -227,4 +279,3 @@ await deleteFile(product.cover_image.public_id);
     data: null,
   });
 });
-

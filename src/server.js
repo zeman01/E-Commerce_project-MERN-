@@ -16,7 +16,11 @@ import userRoutes from "./routes/user.route.js";
 import categoryRoutes from "./routes/category.route.js";
 import brandRoutes from "./routes/brand.route.js";
 import productRoutes from "./routes/product.route.js";
-// import wishlistRoutes from "./routes/wishlist.route.js";
+import wishlistRoutes from "./routes/wishlist.route.js";
+import cartRoutes from "./routes/cart.route.js";
+import orderRoutes from "./routes/order.route.js";
+
+// port
 
 const PORT = process.env.PORT || 8080;
 // app instance
@@ -45,7 +49,9 @@ app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/brands", brandRoutes);
-// app.use("/api/wishlist",wishlistRoutes)
+app.use("/api/wishlist",wishlistRoutes)
+app.use("/api/cart",cartRoutes)
+app.use("/api/orders",orderRoutes)
 
 // ! error handling middleware
 app.use(errorHandler);

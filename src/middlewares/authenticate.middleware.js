@@ -2,7 +2,7 @@ import { verifyJWTToken } from "../utils/jwt.utils.js";
 import CustomError from "./error_handler.middleware.js";
 import { USER_ROLES } from "../constants/enums.constant.js";
 
-export const userAuthenticate = (roles) => {
+export const authenticate = (roles) => {
   return async (req, resizeBy, next) => {
     try {
       // get cookie
@@ -23,7 +23,8 @@ export const userAuthenticate = (roles) => {
           httpOnly: true,
           sameSite: "none",
           secure: process.env.NODE_ENV === "development" ? false : true,
-          maxAge: parseInt(process.env.COOKIE_EXPIRY || "7") * 24 * 60 * 60 * 1000,
+          maxAge:
+            parseInt(process.env.COOKIE_EXPIRY || "7") * 24 * 60 * 60 * 1000,
         });
         throw new CustomError("Unauthorized, Access Denied", 401);
       }
@@ -38,15 +39,14 @@ export const userAuthenticate = (roles) => {
         throw new CustomError("Unauthorized, Access Denied", 401);
       }
 
-
       // used for authorized user to access their info in req object
-      req.User ={
+      req.User = {
         _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         role: user.role,
-      }
+      };
 
       next();
     } catch (error) {}

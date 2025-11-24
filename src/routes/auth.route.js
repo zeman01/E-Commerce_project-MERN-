@@ -5,7 +5,7 @@ import { uploadFile } from '../middlewares/multer.middleware.js';
 
 // import auth controller functions
 
-import { register, login,  } from '../controllers/auth.controller.js';
+import { register, login, logout } from '../controllers/auth.controller.js';
 
 
 
@@ -20,6 +20,9 @@ router.post('/register', uploader.single("profile_image"), register);
 
 // login route
 router.post('/login', login);
+
+// logout route
+router.post('/logout', logout);
 
 // change Password route
 

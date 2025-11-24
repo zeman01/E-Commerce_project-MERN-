@@ -3,11 +3,13 @@ import express from "express";
 const router = express.Router();
 
 import { USER_ROLES } from "../constants/enums.constant.js";
-
-import {
-  create
-} from "../controllers/wishlist.controller.js";
 import { authenticate } from "../middlewares/authenticate.middleware.js";
+import {
+  create,
+  getAll,
+  clear
+} from "../controllers/wishlist.controller.js";
+
 
 // Add to wishlist authenticated route
 router.post(

@@ -10,13 +10,13 @@ const wishlistSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
       required: true,
     },
     product: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        ref: "product",
         required: true,
       },
     ],
@@ -24,6 +24,6 @@ const wishlistSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Wishlist = mongoose.model("Wishlist", wishlistSchema);
+const Wishlist = mongoose.model("wishlist", wishlistSchema);
 
 export default Wishlist;
