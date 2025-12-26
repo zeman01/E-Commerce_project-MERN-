@@ -1,6 +1,6 @@
 
 
-export const errorHandler = ((error, req, res, next) => {
+export const errorHandler = ((error, req, res) => {
   const message = error?.message || "Something went wrong";
 
 
