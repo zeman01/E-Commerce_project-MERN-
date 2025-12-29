@@ -145,4 +145,10 @@ export const changePassword = asyncHandler(async (req, res, next) => {
   });
 });
 
-// !
+// ! check auth / me
+export const  me = asyncHandler(async (req, res) => {
+  const id = req.user._id;
+  const user = await USER.findOne({_id: id});
+
+  res
+});

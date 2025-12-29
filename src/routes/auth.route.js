@@ -5,7 +5,9 @@ import { uploadFile } from '../middlewares/multer.middleware.js';
 
 // import auth controller functions
 
-import { register, login, logout } from '../controllers/auth.controller.js';
+import { register, login, logout, me } from '../controllers/auth.controller.js';
+import { authenticate } from '../middlewares/authenticate.middleware.js';
+import { USER_ROLES } from '../constants/enums.constant.js';
 
 
 
@@ -28,6 +30,8 @@ router.post('/logout', logout);
 
 // forget password route
 
+// user page after login
+router.get('/me',authenticate([USER_ROLES.USER, USER_ROLES.ADMIN]), me);
 
 
 export default router;
