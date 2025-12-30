@@ -1,19 +1,17 @@
 import { USER_ROLES } from "../constants/enums.constant.js";
-import USER from "../models/user.model.js";
-import { hashPassword, comparePassword } from "../utils/bcrypt.utils.js";
-
-// import custom error class
 import CustomError from "../middlewares/error_handler.middleware.js";
+import USER from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.utils.js";
-import { sendEmail } from "../utils/nodemailer.utils.js";
-import { uploadToCloudinary } from "../utils/cloudinary.utils.js";
+import { comparePassword, hashPassword } from "../utils/bcrypt.utils.js";
+import { uploadToCloud } from "../utils/cloudinary.utils.js";
+import { registerSuccessEmail } from "../utils/email.utils.js";
 import { generateJWTToken } from "../utils/jwt.utils.js";
+import { sendEmail } from "../utils/nodemailer.utils.js";
 
-//! register user
-export const register = asyncHandler(async (req, res) => {
+// register user
+export const register = asyncHandler(async (req, res, next) => {
   const { first_name, last_name, email, password, phone, gender } = req.body;
   const image = req.file;
-  console.log(image);
 
   if (!password) {
     throw new CustomError("Password is required", 400);
@@ -31,7 +29,7 @@ export const register = asyncHandler(async (req, res) => {
   });
 
   if (image) {
-    const { path, public_id } = await uploadToCloudinary(
+    const { path, public_id } = await uploadToCloud(
       image.path,
       "/profile_images"
     );
@@ -40,6 +38,13 @@ export const register = asyncHandler(async (req, res) => {
       public_id,
     };
   }
+
+  //* send email
+  await sendEmail({
+    to: user.email,
+    subject: "Account created",
+    html: registerSuccessEmail(),
+  });
 
   await user.save();
 
@@ -50,10 +55,9 @@ export const register = asyncHandler(async (req, res) => {
   });
 });
 
-//! login
-export const login = asyncHandler(async (req, res) => {
-  //* email pass
-  console.log(req.body);
+// login
+export const login = asyncHandler(async (req, res, next) => {
+  //!email pass
   const { email, password } = req.body;
   if (!email) {
     throw new CustomError("Email is required", 400);
@@ -61,39 +65,40 @@ export const login = asyncHandler(async (req, res) => {
   if (!password) {
     throw new CustomError("password is required", 400);
   }
-
-  //* check/get user by email
+  //! check/get user by email
   const user = await USER.findOne({ email });
   // throw error if user not found
   if (!user) {
-    throw new CustomError("user does not match", 400);
+    throw new CustomError("Credentials does not match", 400);
   }
-  //* compare password
+  //! compare password
   const isMatch = await comparePassword(password, user.password);
-
-  //* throw error if pass do not match
+  //! throw error if pass do not match
   if (!isMatch) {
     throw new CustomError("Credentials does not match", 400);
   }
 
-  await sendEmail();
-  //* token
-  const token = generateJWTToken({
-    id: user._id,
+  await sendEmail({
+    to: user?.email,
+    subject: "Login Success",
+    html: "<h1>New Login</h1>",
+  });
+
+  //! token
+  const access_token = generateJWTToken({
+    _id: user._id,
     email: user.email,
     first_name: user.first_name,
     last_name: user.last_name,
     role: user.role,
   });
 
-  //* login success
+  //! login success
   res
-
-    //* using cookie
     .cookie("access_token", access_token, {
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === "development" ? lax :"none",
       secure: process.env.NODE_ENV === "development" ? false : true,
+      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
       maxAge: parseInt(process.env.COOKIE_EXPIRY || "7") * 24 * 60 * 60 * 1000,
     })
     .status(201)
@@ -104,51 +109,34 @@ export const login = asyncHandler(async (req, res) => {
     });
 });
 
-// ! Logout
-export const logout = asyncHandler(async (req, res, next) => {
+// logout
+
+export const logout = asyncHandler(async (req, res) => {
   res
     .clearCookie("access_token", {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
       secure: process.env.NODE_ENV === "development" ? false : true,
     })
     .status(200)
     .json({
-      message: "Logout successful",
+      message: "Logged out successfully!!",
       status: "success",
       data: null,
     });
 });
 
-// ! change password
-export const changePassword = asyncHandler(async (req, res, next) => {
-  const { oldPassword, newPassword } = req.body;
-  const userId = req.user._id;
-
-  // fetch user
-  const user = await USER.findById(userId).select("+password");
-
-  // compare old password
-  const isMatch = await comparePassword(oldPassword, user.password);
-  if (!isMatch) {
-    throw new CustomError("Old password is incorrect", 400);
-  }
-
-  // hash new password
-  const hashedPass = await hashPassword(newPassword);
-  user.password = hashedPass;
-  await user.save();
+// check auth /me
+export const me = asyncHandler(async (req, res) => {
+  const id = req.user._id;
+  const user = await USER.findOne({ _id: id });
 
   res.status(200).json({
-    message: "Password changed successfully",
-    status: "success",
+    message: "User Profile fetched",
+    data: user,
   });
 });
 
-// ! check auth / me
-export const  me = asyncHandler(async (req, res) => {
-  const id = req.user._id;
-  const user = await USER.findOne({_id: id});
+// change password
 
-  res
-});
+// forgot password

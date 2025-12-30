@@ -5,11 +5,11 @@ import express from "express";
 const router = express.Router();
 
 import {
-  createBrand,
+  create,
   getAll,
   getById,
-  updateBrand,
-  deleteBrand,
+  update,
+  remove,
 } from "../controllers/brand.controller.js";
 
 import { uploadFile } from "../middlewares/multer.middleware.js";
@@ -18,7 +18,7 @@ import { uploadFile } from "../middlewares/multer.middleware.js";
 const upload = uploadFile();
 
 // create brand route
-router.post("/", upload.single("image"), createBrand);
+router.post("/", upload.single("image"), create);
 
 // get all brands route
 router.get("/", getAll);
@@ -27,9 +27,9 @@ router.get("/", getAll);
 router.get("/:id", getById);
 
 // update brand route
-router.put("/:id", upload.single("image"), updateBrand);
+router.put("/:id", upload.single("image"), update);
 
 // delete brand route
-router.delete("/:id", deleteBrand);
+router.delete("/:id", remove);
 
 export default router;

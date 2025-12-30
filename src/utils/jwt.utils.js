@@ -6,7 +6,7 @@ import { JWT_CONFIG } from '../config/config.js'
 
 export const generateJWTToken = (payload) => {
     return jwt.sign(payload, JWT_CONFIG.secret, {
-        expiresIn:JWT_CONFIG.expires_in
+        expiresIn:JWT_CONFIG.expiresIn
     })
 }
 

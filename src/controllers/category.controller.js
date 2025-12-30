@@ -1,82 +1,104 @@
+import CustomError from "../middlewares/error_handler.middleware.js";
 import Category from "../models/category.model.js";
 import { asyncHandler } from "../utils/asyncHandler.utils.js";
-import { uploadToCloudinary } from "../utils/cloudinary.utils.js";
-import CustomError from "../middlewares/error_handler.middleware.js";
+import { deleteFile, uploadToCloud } from "../utils/cloudinary.utils.js";
+import { getPagination } from "../utils/pagination.utils.js";
 
 // create category
-export const createCategory = asyncHandler(async (req, res, next) => {
+export const createCategory = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
   const file = req.file;
+
+  if (!name) {
+    throw new CustomError("name is required", 400);
+  }
 
   const category = new Category({ name, description });
 
-  //   image upload
+  // image
   if (file) {
-    const { path, public_id } = await uploadToCloudinary(
-      file.path,
-      "/categories"
-    );
+    const { path, public_id } = await uploadToCloud(file.path, "/categories");
     category.image = {
       path,
       public_id,
     };
   }
 
-  //   save category
   await category.save();
 
   res.status(201).json({
-    message: "Category created successfully",
+    message: "Category created",
     status: "success",
     data: category,
   });
 });
 
-// get all categories
-export const getAllCategories = asyncHandler(async (req, res, next) => {
-  // req query filters
-  // add pagination
-  const filter = {};
-  const { query, page, limit } = req.query;
-  const currentPage = parseInt(page) || 1;
-  const itemsPerPage = parseInt(limit) || 10;
-  const skip = (currentPage - 1) * itemsPerPage;
+// get all
+export const getAllCategories = asyncHandler(async (req, res) => {
+  // req.query
 
-  // for search with page
+  const filter = {};
+  const { query, page = 1, limit = 10 } = req.query;
+  const current_page = parseInt(page)
+  const per_page_limit  = parseInt(limit)
+const skip = (current_page - 1) * per_page_limit
+
+
+
   if (query) {
     filter.$or = [
-      { name: { $regex: query, $options: "i" } },
-      { description: { $regex: query, $options: "i" } },
+      {
+        name: { $regex: query, $options: "i" },
+      },
+       {
+        description: { $regex: query, $options: "i" },
+      },
     ];
   }
 
-  const categories = await Category.find(filter).limit(itemsPerPage).skip(skip)
-    .sort;
+  // price range
+  // if(){}
+  
+  // category_id
+
+  // brand
+
+  const categories = await Category.find(filter).limit(per_page_limit).skip(skip).sort({
+    createdAt:-1
+  
+  });
+  const total_count = await Category.countDocuments(filter)
+
+// 11 -> 10  -> 2
+  const pagination = getPagination(total_count,current_page , per_page_limit )
 
   res.status(200).json({
-    message: "Categories fetched successfully",
+    message: "Category fetched",
     status: "success",
     data: categories,
+    pagination
   });
 });
-// get category by id
-export const getCategoryById = asyncHandler(async (req, res, next) => {
+
+// get all
+export const getCategoryById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const category = await Category.findById(id);
+
+  const category = await Category.findOne({ _id: id });
 
   if (!category) {
     throw new CustomError("Category not found", 404);
   }
 
   res.status(200).json({
-    message: "Category fetched successfully",
+    message: "Category fetched",
     status: "success",
     data: category,
   });
 });
 
-// update category
-export const updateCategory = asyncHandler(async (req, res, next) => {
+// update
+export const updateCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name, description } = req.body;
   const file = req.file;
@@ -86,48 +108,50 @@ export const updateCategory = asyncHandler(async (req, res, next) => {
   if (!category) {
     throw new CustomError("Category not found", 404);
   }
-
+  if (name) {
+    category.name = name;
+  }
   if (description) {
+    category.description = description;
   }
 
-  category.name = name || category.name;
-  category.description = description || category.description;
-
-  // image upload
   if (file) {
-    const { path, public_id } = await uploadToCloudinary(
-      file.path,
-      "/categories"
-    );
+    if (category.image) {
+      await deleteFile(category.image?.public_id);
+    }
+    const { public_id, path } = await uploadToCloud(file.path);
     category.image = {
-      path,
       public_id,
+      path,
     };
   }
 
-  // save updated category
   await category.save();
 
   res.status(200).json({
-    message: "Category updated successfully",
+    message: "Category updated",
     status: "success",
     data: category,
   });
 });
 
-// delete category
-export const deleteCategory = asyncHandler(async (req, res, next) => {
+// delete
+export const deleteCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const category = await Category.findOne({ _id: id });
 
   if (!category) {
     throw new CustomError("Category not found", 404);
   }
-  // delete image from cloudinary
-  await category.remove();
+
+  if (category.image) {
+    await deleteFile(category.image?.public_id);
+  }
+
+  await category.deleteOne();
 
   res.status(200).json({
-    message: "Category deleted successfully",
+    message: "Category deleted",
     status: "success",
     data: null,
   });

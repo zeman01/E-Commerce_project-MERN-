@@ -9,7 +9,7 @@ import {
   getById,
   update,
   remove,
-} from "../controllers/products.controller.js";
+} from "../controllers/product.controller.js";
 
 import { uploadFile } from "../middlewares/multer.middleware.js";
 

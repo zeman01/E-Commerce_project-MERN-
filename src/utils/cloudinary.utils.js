@@ -5,7 +5,7 @@ import fs from "fs";
 
 
 
-export const uploadToCloudinary = async (file, dir = '/ ') => {
+export const uploadToCloud = async (file, dir = '/ ') => {
     try {
 
         const folder = 'E-Com' + dir;
