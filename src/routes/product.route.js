@@ -1,6 +1,4 @@
 import express from "express";
-
-// router instance
 const router = express.Router();
 
 import {
@@ -9,14 +7,16 @@ import {
   getById,
   update,
   remove,
+  getAllFeatured,
+  getNewArrivals,
+  getByBrand,
+  getByCategory,
 } from "../controllers/product.controller.js";
 
 import { uploadFile } from "../middlewares/multer.middleware.js";
-
-// use file upload middleware
 const uploader = uploadFile();
 
-// create product route
+// CREATE
 router.post(
   "/",
   uploader.fields([
@@ -26,16 +26,22 @@ router.post(
   create
 );
 
-// get all products route
-router.get("/",getAll);
+// LIST ALL
+router.get("/", getAll);
 
-// get product by id route
+// ⭐ MUST COME BEFORE ID ROUTE
+router.get("/featured", getAllFeatured);
+router.get("/new-arrivals", getNewArrivals);
+router.get("/brand/:brand_id", getByBrand);
+router.get("/category/:category_id", getByCategory);
+
+// GET BY ID
 router.get("/:id", getById);
 
-// update product route
+// UPDATE
 router.put("/:id", uploader.single("image"), update);
 
-// delete product route
+// DELETE
 router.delete("/:id", remove);
 
 export default router;

@@ -4,7 +4,8 @@ import { asyncHandler } from "../utils/asyncHandler.utils.js";
 import Brand from "../models/brand.model.js";
 import { deleteFile, uploadToCloud } from "../utils/cloudinary.utils.js";
 import Category from "../models/category.model.js";
-import { getPagination } from '../utils/pagination.utils.js';
+import { getPagination } from "../utils/pagination.utils.js";
+import mongoose from "mongoose";
 
 const dir = "/products";
 
@@ -79,22 +80,27 @@ export const getAll = asyncHandler(async (req, res) => {
     .populate("category")
     .populate("brand")
     .sort({ createdAt: -1 });
-  
-  const total_counts = await Product.countDocuments(filter)
-  
-  const pagination = getPagination(total_counts, page , limit)
+
+  const total_counts = await Product.countDocuments(filter);
+
+  const pagination = getPagination(total_counts, page, limit);
 
   res.status(200).json({
     message: "Products fetched",
     status: "success",
     data: products,
-    pagination
+    pagination,
   });
 });
 
 // get by id
 export const getById = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res
+      .status(400)
+      .json({ status: "error", message: "Invalid product ID" });
+  }
   const product = await Product.findOne({ _id: id })
     .populate("category")
     .populate("brand");
