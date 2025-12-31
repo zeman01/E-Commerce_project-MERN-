@@ -78,11 +78,11 @@ export const login = asyncHandler(async (req, res, next) => {
     throw new CustomError("Credentials does not match", 400);
   }
 
-  await sendEmail({
-    to: user?.email,
-    subject: "Login Success",
-    html: "<h1>New Login</h1>",
-  });
+  // await sendEmail({
+  //   to: user?.email,
+  //   subject: "Login Success",
+  //   html: "<h1>New Login</h1>",
+  // });
 
   //! token
   const access_token = generateJWTToken({
@@ -130,6 +130,7 @@ export const logout = asyncHandler(async (req, res) => {
 export const me = asyncHandler(async (req, res) => {
   const id = req.user._id;
   const user = await USER.findOne({ _id: id });
+  console.log("me ");
 
   res.status(200).json({
     message: "User Profile fetched",

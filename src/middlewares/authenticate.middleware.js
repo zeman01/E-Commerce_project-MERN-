@@ -1,13 +1,14 @@
 import { verifyJWTToken } from "../utils/jwt.utils.js";
 import CustomError from "./error_handler.middleware.js";
 import { USER_ROLES } from "../constants/enums.constant.js";
+import User from "../models/user.model.js";
 
 export const authenticate = (roles) => {
-  return async (req, resizeBy, next) => {
+  return async (req, res, next) => {
     try {
       // get cookie
       const cookie = req.cookies ?? {};
-      const token = cookies["access_token"];
+      const token = cookie["access_token"];
 
       if (!token) {
         throw new CustomError("Unauthorized, Access Denied", 401);
@@ -19,18 +20,18 @@ export const authenticate = (roles) => {
 
       // expiry
       if (payload?.exp && payload?.exp * 1000 < Date.now()) {
-        res.clearCookieI("access_token", {
+        res.clearCookie("access_token", {
           httpOnly: true,
-          sameSite: process.env.NODE_ENV === "development" ? "lax" :"none",
+          sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
           secure: process.env.NODE_ENV === "development" ? false : true,
-          maxAge:
-            parseInt(process.env.COOKIE_EXPIRY || "7") * 24 * 60 * 60 * 1000,
+          maxAge: Date.now(),
         });
         throw new CustomError("Unauthorized, Access Denied", 401);
       }
       const user = await User.findOne({
         _id: payload._id,
         email: payload.email,
+
       });
       console.log(user);
 
@@ -40,7 +41,7 @@ export const authenticate = (roles) => {
       }
 
       // used for authorized user to access their info in req object
-      req.User = {
+      req.user = {
         _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,

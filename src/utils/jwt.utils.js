@@ -12,7 +12,7 @@ export const generateJWTToken = (payload) => {
 
 export const verifyJWTToken = (token) => {
     try {
-        return jwt.verify(token,)
+        return jwt.verify(token, JWT_CONFIG.secret)
     } catch (error) {
         
     }
